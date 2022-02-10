@@ -3,7 +3,7 @@ package com.tencent.wxcloudrun.dto;
 import lombok.Data;
 
 @Data
-public class CounterRequest {
+public class CounterReqDto {
 
   // `action`：`string` 类型，枚举值
   // 等于 `"inc"` 时，表示计数加一

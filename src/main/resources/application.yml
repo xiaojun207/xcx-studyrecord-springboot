@@ -5,7 +5,7 @@ server:
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${MYSQL_ADDRESS}/${MYSQL_DATABASE:springboot_demo}
+    url: jdbc:mysql://${MYSQL_ADDRESS}/${MYSQL_DATABASE:study-record}
     username: ${MYSQL_USERNAME}
     password: ${MySQL_PASSWORD}
   mvc:
@@ -15,3 +15,9 @@ spring:
 
 mybatis:
   mapper-locations: classpath*:mapper/*Mapper.xml
+
+#  微信小程序配置 appid /appsecret
+wx:
+  applet:
+    appid: ${APP_ID}
+    appsecret: ${APP_SECRET}
