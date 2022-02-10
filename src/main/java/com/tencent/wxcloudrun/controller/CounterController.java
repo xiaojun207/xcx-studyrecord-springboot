@@ -18,7 +18,6 @@ import java.util.Optional;
  * counter控制器
  */
 @RestController
-
 public class CounterController {
 
   final CounterService counterService;
@@ -34,7 +33,7 @@ public class CounterController {
    * 获取当前计数
    * @return API response json
    */
-  @GetMapping(value = "/api/count")
+  @GetMapping(value = "/count")
   ApiResponse get() {
     logger.info("/api/count get request");
     Optional<Counter> counter = counterService.getCounter(1);
@@ -52,7 +51,7 @@ public class CounterController {
    * @param request {@link CounterReqDto}
    * @return API response json
    */
-  @PostMapping(value = "/api/count")
+  @PostMapping(value = "/count")
   ApiResponse create(@RequestBody CounterReqDto request) {
     logger.info("/api/count post request, action: {}", request.getAction());
 

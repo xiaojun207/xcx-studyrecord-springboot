@@ -20,7 +20,7 @@
     <update id="upsertWxAccount" parameterType="com.tencent.wxcloudrun.model.WxAccount">
         INSERT INTO `WxAccount`(`id`, `openid`, `unionid`, `sessionKey`)
         VALUE(#{id}, #{openid}, #{unionid}, #{sessionKey})
-        ON DUPLICATE KEY UPDATE openid=#{openid}, unionid=#{unionid}, openid=#{sessionKey}
+        ON DUPLICATE KEY UPDATE openid=#{openid}, unionid=#{unionid}, sessionKey=#{sessionKey}
     </update>
 
 </mapper>

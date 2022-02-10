@@ -27,18 +27,15 @@ import java.net.URI;
 @Service
 public class WxAccountService implements WxAppletService {
 
-    @Resource
-    private RestTemplate restTemplate;
-
     @Value("${wx.applet.appid}")
     private String appid;
-
     @Value("${wx.applet.appsecret}")
     private String appSecret;
 
     @Resource
     private WxAccountMapper wxAccountMapper;
-
+    @Resource
+    private RestTemplate restTemplate;
     @Resource
     HttpSession session;
 
@@ -71,26 +68,24 @@ public class WxAccountService implements WxAppletService {
         String resultJson = code2Session(code);
         //2 . 解析数据
         Code2SessionResponse response = JsonUtils.toJavaObject(resultJson, Code2SessionResponse.class);
-
-        log.info("resultJson:" + resultJson);
-        if (!response.getErrcode().equals("0")) {
-            return null;
-        }else {
+//        log.info("resultJson:" + resultJson);
+//        log.info("response:" + response);
+        if ("0".equals(response.getErrcode())) {
             //3 . 先从本地数据库中查找用户是否存在
             WxAccount wxAccount = wxAccountMapper.findByWxOpenid(response.getOpenid());
             if (wxAccount == null) {
                 wxAccount = new WxAccount();
                 wxAccount.setOpenid(response.getOpenid());    //不存在就新建用户
-                wxAccount.setUnionid(response.getUnionid());
             }
+            wxAccount.setUnionid(response.getUnionid());
             //4 . 更新sessionKey和 登陆时间
             wxAccount.setSessionKey(response.getSession_key());
             wxAccountMapper.upsertWxAccount(wxAccount);
             //5 . JWT 返回自定义登陆态 Token
-            String token = "testToken";
             session.setAttribute("wxAccount", wxAccount);
-            return new TokenDto(token);
+            return new TokenDto("TestToken");
         }
+        return null;
     }
 
 
