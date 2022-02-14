@@ -1,18 +1,15 @@
 package com.tencent.wxcloudrun.controller;
 
-import com.alibaba.fastjson.JSONArray;
 import com.tencent.wxcloudrun.config.ApiResponse;
-import com.tencent.wxcloudrun.dto.CounterReqDto;
-import com.tencent.wxcloudrun.model.Counter;
 import com.tencent.wxcloudrun.model.WxAccount;
-import com.tencent.wxcloudrun.service.CounterService;
 import com.tencent.wxcloudrun.service.FamilyService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
 import javax.annotation.Resource;
-import java.util.Optional;
 
 /**
  * counter控制器
@@ -24,7 +21,7 @@ public class FamilyController {
   @Resource
   FamilyService familyService;
 
-  @GetMapping(value = "/memberlist")
+  @GetMapping(value = "/memberList")
   ApiResponse memberList(@SessionAttribute("wxAccount") WxAccount wxAccount) {
     return ApiResponse.ok(familyService.findAll(wxAccount.getId()));
   }

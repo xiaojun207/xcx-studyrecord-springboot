@@ -1,20 +1,13 @@
 package com.tencent.wxcloudrun.controller;
 
 import com.tencent.wxcloudrun.config.ApiResponse;
-import com.tencent.wxcloudrun.dto.CounterReqDto;
-import com.tencent.wxcloudrun.model.Counter;
 import com.tencent.wxcloudrun.model.UserTest;
 import com.tencent.wxcloudrun.model.WxAccount;
-import com.tencent.wxcloudrun.service.CounterService;
 import com.tencent.wxcloudrun.service.UserTestService;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.Optional;
 
 /**
  * counter控制器
@@ -33,7 +26,7 @@ public class TestController {
    return ApiResponse.ok();
   }
 
-  @GetMapping(value = "/mylist")
+  @GetMapping(value = "/myList")
   ApiResponse myTest(@SessionAttribute("wxAccount") WxAccount wxAccount) {
     return ApiResponse.ok(userTestService.findAllByUid(wxAccount.getId()));
   }
