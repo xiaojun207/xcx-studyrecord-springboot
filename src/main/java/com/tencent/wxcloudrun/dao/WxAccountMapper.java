@@ -7,6 +7,8 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface WxAccountMapper {
 
+  WxAccount findByWxUid(@Param("id") Integer id);
+
   WxAccount findByWxOpenid(@Param("openid") String openid);
 
   void upsertWxAccount(WxAccount wxAccount);

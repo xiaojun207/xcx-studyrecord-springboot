@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tencent.wxcloudrun.dao.ProjectMapper">
+    <resultMap id="projectMapper" type="com.tencent.wxcloudrun.model.Project">
+        <id property="id" column="id"/>
+
+        <result property="name" column="name"/>
+        <result property="icon" column="icon"/>
+
+        <result property="createdAt" column="createdAt" javaType="java.time.LocalDateTime"/>
+        <result property="updatedAt" column="updatedAt" javaType="java.time.LocalDateTime"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="projectMapper">
+        SELECT `id`, `name`, `icon`, `createdAt`, `updatedAt`
+        FROM Project
+        order id desc
+    </select>
+</mapper>

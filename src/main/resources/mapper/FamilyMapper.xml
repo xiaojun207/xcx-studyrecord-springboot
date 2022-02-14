@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tencent.wxcloudrun.dao.FamilyMapper">
+
+    <resultMap id="projectMapper" type="com.tencent.wxcloudrun.model.Family">
+        <id property="id" column="id"/>
+
+        <result property="headUid" column="headUid"/>
+        <result property="memberUid" column="memberUid"/>
+
+        <result property="createdAt" column="createdAt" javaType="java.time.LocalDateTime" />
+        <result property="updatedAt" column="updatedAt" javaType="java.time.LocalDateTime"  />
+    </resultMap>
+
+    <select id="findAll" resultMap="projectMapper" parameterType="java.lang.Integer">
+        SELECT `id`, `headUid`, `memberUid`, `createdAt`, `updatedAt`
+        FROM Family
+        where  headUid=#{headUid}
+        order id desc
+    </select>
+
+
+</mapper>
