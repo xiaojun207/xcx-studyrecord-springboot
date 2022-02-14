@@ -9,8 +9,8 @@ import java.time.LocalDateTime;
 public class UserTest implements Serializable {
 
     private Integer id;
-
     private Integer uid;
+    private String nickName;
     private Integer projectId;
     private String projectName;
     private Double result;

@@ -14,6 +14,6 @@
     <select id="findAll" resultMap="projectMapper">
         SELECT `id`, `name`, `icon`, `createdAt`, `updatedAt`
         FROM Project
-        order id desc
+        order by id desc
     </select>
 </mapper>

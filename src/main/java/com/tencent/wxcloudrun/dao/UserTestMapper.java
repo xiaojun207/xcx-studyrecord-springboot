@@ -9,7 +9,7 @@ import java.util.List;
 @Mapper
 public interface UserTestMapper {
 
-  List<UserTest> findAllByUid(@Param("uid") Integer uid);
+  List<UserTest> findAllByUidList(@Param("uidList") List<Integer> uidList);
 
   void insertUserTest(UserTest userTest);
 

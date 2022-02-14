@@ -9,7 +9,8 @@
     </select>
 
     <select id="findByWxUid" resultType="com.tencent.wxcloudrun.model.WxAccount"  parameterType="java.lang.Integer">
-        SELECT `id`, `openid`, `unionid`, `sessionKey`, `createdAt`, `updatedAt`
+
+        SELECT `id`, `nickName`, `avatarUrl`, `mobile`, `gender`, `country`, `province`, `city`, `openid`, `unionid`, `sessionKey`, `createdAt`, `updatedAt`
         FROM WxAccount
         WHERE id = #{id}
     </select>

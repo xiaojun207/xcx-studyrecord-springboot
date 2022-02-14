@@ -21,11 +21,14 @@ public class FamilyServiceImpl implements FamilyService {
     WxAccountMapper wxAccountMapper;
 
     @Override
-    public List<WxAccount> findAll(Integer headUid) {
-        List<Family> list = familyMapper.findAll(headUid);
+    public List<WxAccount> findAll(Integer uid) {
+        Family family = familyMapper.findByUid(uid);
+        List<Family> list = familyMapper.findAll(family.getHeadUid());
         List<WxAccount> res = new ArrayList<>();
         for (Family f : list) {
-            res.add(wxAccountMapper.findByWxUid(f.getMemberUid()));
+            WxAccount wxAccount = wxAccountMapper.findByWxUid(f.getMemberUid());
+            wxAccount.setHeadUid( family.getHeadUid());
+            res.add(wxAccount);
         }
         return res;
     }

@@ -3,16 +3,18 @@
 <mapper namespace="com.tencent.wxcloudrun.dao.UserTestMapper">
 
     <insert id="insertUserTest"  parameterType="com.tencent.wxcloudrun.model.UserTest">
-        INSERT INTO `UserTest`(`id`, `uid`, `projectId`, `projectName`, `result`, `score`,)
+        INSERT INTO `UserTest`(`id`, `uid`, `projectId`, `projectName`, `result`, `score`)
                 VALUE(#{id}, #{uid}, #{projectId}, #{projectName}, #{result}, #{score})
     </insert>
 
-    <select id="findAllByUid" resultType="com.tencent.wxcloudrun.model.UserTest" parameterType="java.lang.Integer">
+    <select id="findAllByUidList" resultType="com.tencent.wxcloudrun.model.UserTest" parameterType="java.lang.Integer">
         SELECT `id`, `uid`, `projectId`, `projectName`, `result`, `score`, `createdAt`, `updatedAt`
         FROM UserTest
-        where uid=#{uid}
-        order id desc
+        where uid IN
+        <foreach collection="uidList" item="uid" index="index" open="(" close=")" separator=",">
+            #{uid}
+        </foreach>
+        order by id desc
     </select>
-
 
 </mapper>
