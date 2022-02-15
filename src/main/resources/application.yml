@@ -3,7 +3,12 @@ server:
   servlet:
     context-path: /api
 
+
 spring:
+  jackson:
+    serialization.write-dates-as-timestamps: true
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd hh:mm:ss
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://${MYSQL_ADDRESS}/${MYSQL_DATABASE:study-record}
@@ -15,8 +20,6 @@ spring:
       suffix: .html
       prefix: /
     throw-exception-if-no-handler-found: true
-mybatis:
-  mapper-locations: classpath*:mapper/*Mapper.xml
 
 #  微信小程序配置 appid /appsecret
 wx:

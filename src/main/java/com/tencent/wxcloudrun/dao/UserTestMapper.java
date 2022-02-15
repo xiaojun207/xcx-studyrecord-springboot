@@ -1,16 +1,25 @@
 package com.tencent.wxcloudrun.dao;
 
 import com.tencent.wxcloudrun.model.UserTest;
-import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
-@Mapper
 public interface UserTestMapper {
 
+  @Select({"<script>",
+          "SELECT `id`, `uid`, `projectId`, `projectName`, `result`, `score`, `createdAt`, `updatedAt` FROM UserTest where uid IN",
+          " <foreach collection='uidList' item='item' index='index' open='(' separator=',' close=')'>",
+          " #{item}",
+          " </foreach>",
+          " order by id desc",
+          "</script>"})
   List<UserTest> findAllByUidList(@Param("uidList") List<Integer> uidList);
 
+  @Insert("INSERT INTO `UserTest`(`id`, `uid`, `projectId`, `projectName`, `result`, `score`)" +
+          " VALUE(#{id}, #{uid}, #{projectId}, #{projectName}, #{result}, #{score})")
   void insertUserTest(UserTest userTest);
 
 }
