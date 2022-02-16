@@ -1,5 +1,6 @@
 package com.tencent.wxcloudrun.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.tencent.wxcloudrun.config.ApiResponse;
@@ -12,11 +13,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 /**
  * counter控制器
  */
+@Slf4j
 @RestController
 public class CounterController {
 
@@ -28,6 +31,16 @@ public class CounterController {
     this.logger = LoggerFactory.getLogger(CounterController.class);
   }
 
+  /**
+   * http://localhost/api/date
+   * @return
+   */
+  @GetMapping(value = "/date")
+  ApiResponse gett() {
+    LocalDateTime now = LocalDateTime.now();
+    log.info("now:" + now.toString());
+    return ApiResponse.ok(now);
+  }
 
   /**
    * 获取当前计数

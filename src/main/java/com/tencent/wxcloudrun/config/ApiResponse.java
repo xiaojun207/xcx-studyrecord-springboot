@@ -18,11 +18,11 @@ public final class ApiResponse {
   }
 
   public static ApiResponse ok() {
-    return new ApiResponse(0, "成功", null);
+    return new ApiResponse(100200, "成功", null);
   }
 
   public static ApiResponse ok(Object data) {
-    return new ApiResponse(200, "成功", data);
+    return new ApiResponse(100200, "成功", data);
   }
 
   public static ApiResponse error(int code, String msg) {

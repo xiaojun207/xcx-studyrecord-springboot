@@ -1,6 +1,7 @@
 package com.tencent.wxcloudrun.service;
 
 import com.tencent.wxcloudrun.dto.TokenDto;
+import com.tencent.wxcloudrun.model.WxAccount;
 
 /**
  * 微信小程序自定义登陆 服务说明
@@ -20,5 +21,7 @@ public interface WxAppletService {
      * @return Token 返回后端 自定义登陆态 token  基于JWT实现
      */
     TokenDto wxUserLogin(String code);
+
+    WxAccount getWxAccountByToken(String token);
 
 }

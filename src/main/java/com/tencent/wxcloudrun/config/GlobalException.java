@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalException {
     String MSG_UserSessionNotExist = "Missing session attribute 'wxAccount' of type WxAccount";
+    String MSG_TokenInvalid = "Token Invalid";
 
     /**
      * 全局异常处理
@@ -18,7 +19,7 @@ public class GlobalException {
         String className = e.getClass().getName();
         log.error("handleException.class:" + className + "，msg:" + e.getMessage());
 
-        if(MSG_UserSessionNotExist.equals(msg)){
+        if(MSG_TokenInvalid.equals(msg) || MSG_UserSessionNotExist.equals(msg)){
             return ApiResponse.error(-101,"未登录");
         }else {
 

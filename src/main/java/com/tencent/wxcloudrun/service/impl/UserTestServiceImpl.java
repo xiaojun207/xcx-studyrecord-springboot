@@ -11,7 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,6 +35,8 @@ public class UserTestServiceImpl implements UserTestService {
         for (UserTest t : res) {
             WxAccount wxAccount = wxAccountMapper.findByWxUid(t.getUid());
             t.setNickName(wxAccount.getNickName());
+            t.getCreatedAt().atZone(TimeZone.getTimeZone("GMT+8").toZoneId());
+            log.info("getCreatedAt:" + t.getCreatedAt().toString());
         }
 
         return res;
@@ -40,6 +44,8 @@ public class UserTestServiceImpl implements UserTestService {
 
     @Override
     public void addUserTest(UserTest userTest) {
+        userTest.setCreatedAt(LocalDateTime.now());
+        userTest.setUpdatedAt(LocalDateTime.now());
         userTestMapper.insertUserTest(userTest);
     }
 }

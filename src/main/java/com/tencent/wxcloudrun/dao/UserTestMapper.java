@@ -1,5 +1,6 @@
 package com.tencent.wxcloudrun.dao;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.tencent.wxcloudrun.model.UserTest;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
@@ -7,7 +8,7 @@ import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
-public interface UserTestMapper {
+public interface UserTestMapper extends BaseMapper<UserTest> {
 
   @Select({"<script>",
           "SELECT `id`, `uid`, `projectId`, `projectName`, `result`, `score`, `createdAt`, `updatedAt` FROM UserTest where uid IN",

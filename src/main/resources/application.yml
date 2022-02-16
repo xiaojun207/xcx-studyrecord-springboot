@@ -6,8 +6,8 @@ server:
 
 spring:
   jackson:
-    serialization.write-dates-as-timestamps: true
-    time-zone: GMT+8
+    serialization.write-dates-as-timestamps: false
+    time-zone: Asia/Shanghai
     date-format: yyyy-MM-dd hh:mm:ss
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver

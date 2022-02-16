@@ -27,7 +27,7 @@ public class TestController {
   }
 
   @GetMapping(value = "/myList")
-  ApiResponse myTest(@SessionAttribute("wxAccount") WxAccount wxAccount) {
+  ApiResponse myTest(WxAccount wxAccount) {
     return ApiResponse.ok(userTestService.findAllByUid(wxAccount.getId()));
   }
 

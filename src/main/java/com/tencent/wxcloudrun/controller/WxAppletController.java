@@ -44,7 +44,7 @@ public class WxAppletController {
      * 需要认证的测试接口  需要 @RequiresAuthentication 注解，则调用此接口需要 header 中携带自定义登陆态 authorization
      */
     @PostMapping("/sayHello")
-    ApiResponse sayHello(@SessionAttribute("wxAccount") WxAccount wxAccount) {
+    ApiResponse sayHello(WxAccount wxAccount) {
         log.info("wxAccount:" + wxAccount);
         Map<String, String> result = new HashMap<>();
         result.put("words", "hello World");

@@ -1,8 +1,10 @@
 package com.tencent.wxcloudrun.service.impl;
 
+import com.tencent.wxcloudrun.config.JwtConfig;
 import com.tencent.wxcloudrun.dao.WxAccountMapper;
 import com.tencent.wxcloudrun.dto.Code2SessionResponse;
 import com.tencent.wxcloudrun.dto.TokenDto;
+import com.tencent.wxcloudrun.model.ApiException;
 import com.tencent.wxcloudrun.model.WxAccount;
 import com.tencent.wxcloudrun.service.WxAppletService;
 import com.tencent.wxcloudrun.utils.HttpUtils;
@@ -36,6 +38,8 @@ public class WxAccountService implements WxAppletService {
     private WxAccountMapper wxAccountMapper;
     @Resource
     private RestTemplate restTemplate;
+    @Resource
+    private JwtConfig jwtConfig;
     @Resource
     HttpSession session;
 
@@ -83,10 +87,19 @@ public class WxAccountService implements WxAppletService {
             wxAccountMapper.upsertWxAccount(wxAccount);
             //5 . JWT 返回自定义登陆态 Token
             session.setAttribute("wxAccount", wxAccount);
-            return new TokenDto("TestToken");
+            //5 . JWT 返回自定义登陆态 Token
+            String token = jwtConfig.createTokenByWxAccount(wxAccount);
+            return new TokenDto(token);
         }
         return null;
     }
 
+    @Override
+    public WxAccount getWxAccountByToken(String token) {
+        if (!jwtConfig.verifyToken(token)){
+            throw new ApiException("Token Invalid");
+        }
+        return jwtConfig.getWxAccountByToken(token);
+    }
 
 }

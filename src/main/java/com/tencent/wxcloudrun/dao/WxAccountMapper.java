@@ -1,5 +1,6 @@
 package com.tencent.wxcloudrun.dao;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.tencent.wxcloudrun.model.WxAccount;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
@@ -7,7 +8,7 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 @Mapper
-public interface WxAccountMapper {
+public interface WxAccountMapper extends BaseMapper<WxAccount> {
 
   @Select("SELECT `id`, `nickName`, `avatarUrl`, `mobile`, `gender`, `country`, `province`, `city`, `openid`, `unionid`, `sessionKey`, `createdAt`, `updatedAt`" +
           " FROM WxAccount WHERE id = #{id}")
