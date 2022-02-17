@@ -32,4 +32,10 @@ public class FamilyServiceImpl implements FamilyService {
         }
         return res;
     }
+
+    @Override
+    public void add(Family family1){
+        Family family = new Family();
+        familyMapper.insertFamily(family);
+    }
 }

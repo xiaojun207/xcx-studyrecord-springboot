@@ -28,7 +28,7 @@ public class WxAppletController {
      */
     @PostMapping("/wx/user/login")
     ApiResponse wxAppletLoginApi(@RequestBody @Validated CodeReqDto req) {
-        TokenDto token = wxAppletService.wxUserLogin(req.getCode());
+        TokenDto token = wxAppletService.wxUserLogin(req);
         if (token != null) {
             return ApiResponse.ok(token);
         }

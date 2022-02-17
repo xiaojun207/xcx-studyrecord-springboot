@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface FamilyService {
     List<WxAccount> findAll(Integer headUid);
+
+    void add(Family family);
 }

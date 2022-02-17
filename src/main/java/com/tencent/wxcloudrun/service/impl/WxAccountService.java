@@ -1,10 +1,13 @@
 package com.tencent.wxcloudrun.service.impl;
 
 import com.tencent.wxcloudrun.config.JwtConfig;
+import com.tencent.wxcloudrun.dao.FamilyMapper;
 import com.tencent.wxcloudrun.dao.WxAccountMapper;
 import com.tencent.wxcloudrun.dto.Code2SessionResponse;
+import com.tencent.wxcloudrun.dto.CodeReqDto;
 import com.tencent.wxcloudrun.dto.TokenDto;
 import com.tencent.wxcloudrun.model.ApiException;
+import com.tencent.wxcloudrun.model.Family;
 import com.tencent.wxcloudrun.model.WxAccount;
 import com.tencent.wxcloudrun.service.WxAppletService;
 import com.tencent.wxcloudrun.utils.HttpUtils;
@@ -37,6 +40,8 @@ public class WxAccountService implements WxAppletService {
     @Resource
     private WxAccountMapper wxAccountMapper;
     @Resource
+    private FamilyMapper familyMapper;
+    @Resource
     private RestTemplate restTemplate;
     @Resource
     private JwtConfig jwtConfig;
@@ -63,13 +68,13 @@ public class WxAccountService implements WxAppletService {
      * 微信小程序用户登陆，完整流程可参考下面官方地址，本例中是按此流程开发
      * https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/login.html
      *
-     * @param code 小程序端 调用 wx.login 获取到的code,用于调用 微信code2session接口
+     * @param req 小程序端 调用 wx.login 获取到的code,用于调用 微信code2session接口
      * @return 返回后端 自定义登陆态 token  基于JWT实现
      */
     @Override
-    public TokenDto wxUserLogin(String code) {
+    public TokenDto wxUserLogin(CodeReqDto req) {
         //1 . code2session返回JSON数据
-        String resultJson = code2Session(code);
+        String resultJson = code2Session(req.getCode());
         //2 . 解析数据
         Code2SessionResponse response = JsonUtils.toJavaObject(resultJson, Code2SessionResponse.class);
 //        log.info("resultJson:" + resultJson);
@@ -87,11 +92,47 @@ public class WxAccountService implements WxAppletService {
             wxAccountMapper.upsertWxAccount(wxAccount);
             //5 . JWT 返回自定义登陆态 Token
             session.setAttribute("wxAccount", wxAccount);
+
+            Integer uid = wxAccount.getId();
+            if (uid == 0){
+                WxAccount tmp = wxAccountMapper.findByWxOpenid(wxAccount.getOpenid());
+                uid = tmp.getId();
+            }
+            String headCode = req.getHeadCode();
+            // 添加关联关系
+            addFamily(uid, headCode);
+
             //5 . JWT 返回自定义登陆态 Token
             String token = jwtConfig.createTokenByWxAccount(wxAccount);
-            return new TokenDto(token);
+
+            try {
+                return new TokenDto(token, (uid + ""));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return null;
+    }
+
+    void addFamily(Integer uid, String headCode){
+
+        Integer headUid = uid;
+        if (headCode != null && !headCode.trim().isEmpty()){
+            try {
+                headUid = Integer.parseInt((headCode)) ;
+            } catch (Exception e) {
+                log.error("addFamily.headUid.err:", e.getMessage());
+            }
+        }
+        try {
+            Family family = new Family();
+            family.setHeadUid(headUid);
+            family.setMemberUid(uid);
+            familyMapper.insertFamily(family);
+        }catch (Exception e){
+
+            log.error("addFamily.insert.err:", e.getMessage());
+        }
     }
 
     @Override

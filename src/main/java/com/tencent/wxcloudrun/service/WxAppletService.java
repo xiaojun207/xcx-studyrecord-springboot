@@ -1,5 +1,6 @@
 package com.tencent.wxcloudrun.service;
 
+import com.tencent.wxcloudrun.dto.CodeReqDto;
 import com.tencent.wxcloudrun.dto.TokenDto;
 import com.tencent.wxcloudrun.model.WxAccount;
 
@@ -20,7 +21,7 @@ public interface WxAppletService {
      * @param code 小程序端 调用 wx.login 获取到的code,用于调用 微信code2session接口
      * @return Token 返回后端 自定义登陆态 token  基于JWT实现
      */
-    TokenDto wxUserLogin(String code);
+    TokenDto wxUserLogin(CodeReqDto codeReqDto);
 
     WxAccount getWxAccountByToken(String token);
 
