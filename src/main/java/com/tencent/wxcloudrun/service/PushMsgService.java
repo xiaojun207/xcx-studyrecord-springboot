@@ -4,6 +4,6 @@ import com.tencent.wxcloudrun.model.WxAccount;
 
 public interface PushMsgService {
 
-    void pushMsgToUser(WxAccount to, String msg);
+    void pushMsgToUser(WxAccount to, String title,  String msg);
 
 }

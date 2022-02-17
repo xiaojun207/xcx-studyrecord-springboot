@@ -15,6 +15,7 @@ public class UserTest implements Serializable {
     private String projectName;
     private Double result;
     private Double score;
+    private String unit;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

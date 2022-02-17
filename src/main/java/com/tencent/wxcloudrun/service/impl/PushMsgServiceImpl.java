@@ -45,7 +45,7 @@ public class PushMsgServiceImpl implements PushMsgService {
      * @param msg
      */
     @Override
-    public void pushMsgToUser(WxAccount to, String msg) {
+    public void pushMsgToUser(WxAccount to,, String title,  String msg) {
        String accessToken = accessTokenMap.get("access_token");
         if(accessToken == null || accessToken.isEmpty()){
             accessToken = this.getAccessToken();
@@ -61,7 +61,7 @@ public class PushMsgServiceImpl implements PushMsgService {
         data.put("name1", name1);
 
         JSONObject thing2 = new JSONObject();
-        thing2.put("value", "该锻炼身体时间了");
+        thing2.put("value", title);
         data.put("thing2", thing2);
 
         JSONObject thing3 = new JSONObject();

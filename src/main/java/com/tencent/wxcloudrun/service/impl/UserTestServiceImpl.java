@@ -65,10 +65,11 @@ public class UserTestServiceImpl implements UserTestService {
         List<Family> list = familyMapper.findAll(family.getHeadUid());
         WxAccount testAccount = wxAccountMapper.findByWxUid(userTest.getUid());
         List<Integer> uidList = list.stream().map(Family::getMemberUid).collect(Collectors.toList());
-        String msg = "你的家庭成员" + testAccount.getNickName() + "刚记录了" + userTest.getProjectName() + ",成绩为：" + userTest.getResult();
+        String title = "你的家庭成员" + testAccount.getNickName() + "增加了锻炼信息";
+        String msg = userTest.getProjectName() + ":" + userTest.getResult() + "" + userTest.getUnit();
         for (Integer uid: uidList) {
             WxAccount wxAccount = wxAccountMapper.findByWxUid(uid);
-            pushMsgService.pushMsgToUser(wxAccount, msg);
+            pushMsgService.pushMsgToUser(wxAccount, title, msg);
         }
     }
 
