@@ -45,7 +45,7 @@ public class PushMsgServiceImpl implements PushMsgService {
      * @param msg
      */
     @Override
-    public void pushMsgToUser(WxAccount to,, String title,  String msg) {
+    public void pushMsgToUser(WxAccount to, String title,  String msg) {
        String accessToken = accessTokenMap.get("access_token");
         if(accessToken == null || accessToken.isEmpty()){
             accessToken = this.getAccessToken();
