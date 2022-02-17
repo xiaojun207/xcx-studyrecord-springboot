@@ -6,8 +6,10 @@ import com.tencent.wxcloudrun.dao.WxAccountMapper;
 import com.tencent.wxcloudrun.model.Family;
 import com.tencent.wxcloudrun.model.UserTest;
 import com.tencent.wxcloudrun.model.WxAccount;
+import com.tencent.wxcloudrun.service.PushMsgService;
 import com.tencent.wxcloudrun.service.UserTestService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -25,6 +27,9 @@ public class UserTestServiceImpl implements UserTestService {
     FamilyMapper familyMapper;
     @Resource
     WxAccountMapper wxAccountMapper;
+
+    @Resource
+    PushMsgService pushMsgService;
 
     @Override
     public List<UserTest> findAllByUid(Integer uid) {
@@ -47,5 +52,24 @@ public class UserTestServiceImpl implements UserTestService {
         userTest.setCreatedAt(LocalDateTime.now());
         userTest.setUpdatedAt(LocalDateTime.now());
         userTestMapper.insertUserTest(userTest);
+        try{
+            pushTestMsg(userTest);
+        }catch (Exception e){
+            log.error("addUserTest.push.err:", e);
+        }
     }
+
+    @Async
+    public void pushTestMsg(UserTest userTest){
+        Family family = familyMapper.findByUid(userTest.getUid());
+        List<Family> list = familyMapper.findAll(family.getHeadUid());
+        WxAccount testAccount = wxAccountMapper.findByWxUid(userTest.getUid());
+        List<Integer> uidList = list.stream().map(Family::getMemberUid).collect(Collectors.toList());
+        String msg = "你的家庭成员" + testAccount.getNickName() + "刚记录了" + userTest.getProjectName() + ",成绩为：" + userTest.getResult();
+        for (Integer uid: uidList) {
+            WxAccount wxAccount = wxAccountMapper.findByWxUid(uid);
+            pushMsgService.pushMsgToUser(wxAccount, msg);
+        }
+    }
+
 }
