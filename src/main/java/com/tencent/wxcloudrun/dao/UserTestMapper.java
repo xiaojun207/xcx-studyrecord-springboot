@@ -19,8 +19,8 @@ public interface UserTestMapper extends BaseMapper<UserTest> {
           "</script>"})
   List<UserTest> findAllByUidList(@Param("uidList") List<Integer> uidList);
 
-  @Insert("INSERT INTO `UserTest`(`id`, `uid`, `projectId`, `projectName`, `result`, `score`)" +
-          " VALUE(#{id}, #{uid}, #{projectId}, #{projectName}, #{result}, #{score})")
+  @Insert("INSERT INTO `UserTest`(`uid`, `projectId`, `projectName`, `result`, `score`)" +
+          " VALUE(#{uid}, #{projectId}, #{projectName}, #{result}, #{score})")
   void insertUserTest(UserTest userTest);
 
 }
