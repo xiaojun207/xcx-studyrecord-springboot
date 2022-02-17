@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 @Data
 public class WxAccount implements Serializable {
 
-    private Integer id;
+    private Integer id = 0;
     private Integer headUid;
     private String nickName;
     private String avatarUrl;
