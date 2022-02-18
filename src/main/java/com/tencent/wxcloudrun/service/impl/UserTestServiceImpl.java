@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
 
@@ -36,12 +37,12 @@ public class UserTestServiceImpl implements UserTestService {
         Family family = familyMapper.findByUid(uid);
         List<Family> list = familyMapper.findAll(family.getHeadUid());
         List<Integer> uidList = list.stream().map(Family::getMemberUid).collect(Collectors.toList());
+        List<WxAccount> wxAccountList = wxAccountMapper.findAllByUidList(uidList);
+        Map<Integer, String> wxAccountMap = wxAccountList.stream().collect(Collectors.toMap(WxAccount::getId, WxAccount::getNickName));
         List<UserTest> res = userTestMapper.findAllByUidList(uidList);
         for (UserTest t : res) {
-            WxAccount wxAccount = wxAccountMapper.findByWxUid(t.getUid());
-            t.setNickName(wxAccount.getNickName());
-            t.getCreatedAt().atZone(TimeZone.getTimeZone("GMT+8").toZoneId());
-            log.info("getCreatedAt:" + t.getCreatedAt().toString());
+            String nickname = wxAccountMap.get(t.getUid());
+            t.setNickName(nickname);
         }
 
         return res;

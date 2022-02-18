@@ -45,8 +45,6 @@ public class WxAccountService implements WxAppletService {
     private RestTemplate restTemplate;
     @Resource
     private JwtConfig jwtConfig;
-    @Resource
-    HttpSession session;
 
     /**
      * 微信的 code2session 接口 获取微信用户信息
@@ -91,16 +89,15 @@ public class WxAccountService implements WxAppletService {
             wxAccount.setSessionKey(response.getSession_key());
             wxAccountMapper.upsertWxAccount(wxAccount);
             //5 . JWT 返回自定义登陆态 Token
-            session.setAttribute("wxAccount", wxAccount);
 
             Integer uid = wxAccount.getId();
             if (uid == 0){
                 WxAccount tmp = wxAccountMapper.findByWxOpenid(wxAccount.getOpenid());
                 uid = tmp.getId();
+                // 如果是新用户，尝试添加关联关系
+                String headCode = req.getHeadCode();
+                addFamily(uid, headCode);
             }
-            String headCode = req.getHeadCode();
-            // 添加关联关系
-            addFamily(uid, headCode);
 
             //5 . JWT 返回自定义登陆态 Token
             String token = jwtConfig.createTokenByWxAccount(wxAccount);
@@ -130,7 +127,6 @@ public class WxAccountService implements WxAppletService {
             family.setMemberUid(uid);
             familyMapper.insertFamily(family);
         }catch (Exception e){
-
             log.error("addFamily.insert.err:", e.getMessage());
         }
     }
