@@ -1,5 +1,6 @@
 package com.tencent.wxcloudrun.model;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
@@ -8,6 +9,7 @@ import java.time.LocalDateTime;
 
 // mybatis-plus中的表名与类名完全一样
 @Data
+@TableName("WxAccount")
 public class WxAccount implements Serializable {
 
     private Integer id = 0;

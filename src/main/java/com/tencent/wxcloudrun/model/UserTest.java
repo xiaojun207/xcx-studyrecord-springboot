@@ -1,5 +1,6 @@
 package com.tencent.wxcloudrun.model;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -8,6 +9,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
+@TableName("UserTest")
 public class UserTest implements Serializable {
 
     private Integer id;
