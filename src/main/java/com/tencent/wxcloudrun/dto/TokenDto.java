@@ -7,5 +7,12 @@ import lombok.Data;
 @AllArgsConstructor
 public class TokenDto {
     private String token;
-    private String uid;
+    private Integer uid;
+
+    private Integer headUid;
+
+    private String nickName;
+    private String avatarUrl;
+    private int gender; //性别 0：未知、1：男、2：女
+
 }

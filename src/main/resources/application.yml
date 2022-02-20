@@ -21,6 +21,13 @@ spring:
       prefix: /
     throw-exception-if-no-handler-found: true
 
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: false
+  global-config:
+    db-config:
+      table-underline: false
+
 #  微信小程序配置 appid /appsecret
 wx:
   applet:

@@ -1,7 +1,6 @@
 package com.tencent.wxcloudrun.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.tencent.wxcloudrun.model.UserTest;
 import com.tencent.wxcloudrun.model.WxAccount;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
@@ -28,7 +27,7 @@ public interface WxAccountMapper extends BaseMapper<WxAccount> {
           "</script>"})
   List<WxAccount> findAllByUidList(@Param("uidList") List<Integer> uidList);
 
-  @Select("SELECT `id`, `openid`, `unionid`, `sessionKey`, `createdAt`, `updatedAt` FROM WxAccount WHERE openid = #{openid}")
+  @Select("SELECT `id`, `nickName`, `avatarUrl`, `mobile`, `gender`, `country`, `province`, `city`, `openid`, `unionid`, `sessionKey`, `createdAt`, `updatedAt` FROM WxAccount WHERE openid = #{openid}")
   WxAccount findByWxOpenid(@Param("openid") String openid);
 
   @Insert(" INSERT INTO `WxAccount`(`id`, `openid`, `unionid`, `sessionKey`)" +

@@ -2,6 +2,7 @@ package com.tencent.wxcloudrun.service;
 
 import com.tencent.wxcloudrun.dto.CodeReqDto;
 import com.tencent.wxcloudrun.dto.TokenDto;
+import com.tencent.wxcloudrun.dto.UpdateWxAccountReqDto;
 import com.tencent.wxcloudrun.model.WxAccount;
 
 /**
@@ -24,5 +25,7 @@ public interface WxAppletService {
     TokenDto wxUserLogin(CodeReqDto codeReqDto);
 
     WxAccount getWxAccountByToken(String token);
+
+    void updateWxAccount(UpdateWxAccountReqDto wxAccount);
 
 }

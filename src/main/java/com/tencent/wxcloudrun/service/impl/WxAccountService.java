@@ -1,11 +1,13 @@
 package com.tencent.wxcloudrun.service.impl;
 
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.tencent.wxcloudrun.config.JwtConfig;
 import com.tencent.wxcloudrun.dao.FamilyMapper;
 import com.tencent.wxcloudrun.dao.WxAccountMapper;
 import com.tencent.wxcloudrun.dto.Code2SessionResponse;
 import com.tencent.wxcloudrun.dto.CodeReqDto;
 import com.tencent.wxcloudrun.dto.TokenDto;
+import com.tencent.wxcloudrun.dto.UpdateWxAccountReqDto;
 import com.tencent.wxcloudrun.model.ApiException;
 import com.tencent.wxcloudrun.model.Family;
 import com.tencent.wxcloudrun.model.WxAccount;
@@ -23,10 +25,10 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpSession;
 import java.net.URI;
 
 /**
+ *
  */
 @Slf4j
 @Service
@@ -90,10 +92,12 @@ public class WxAccountService implements WxAppletService {
             wxAccountMapper.upsertWxAccount(wxAccount);
             //5 . JWT 返回自定义登陆态 Token
 
+
             Integer uid = wxAccount.getId();
-            if (uid == 0){
-                WxAccount tmp = wxAccountMapper.findByWxOpenid(wxAccount.getOpenid());
-                uid = tmp.getId();
+            if (uid == 0) {
+                // 获取id，用户昵称等
+                wxAccount = wxAccountMapper.findByWxOpenid(wxAccount.getOpenid());
+                uid = wxAccount.getId();
                 // 如果是新用户，尝试添加关联关系
                 String headCode = req.getHeadCode();
                 addFamily(uid, headCode);
@@ -103,7 +107,7 @@ public class WxAccountService implements WxAppletService {
             String token = jwtConfig.createTokenByWxAccount(wxAccount);
 
             try {
-                return new TokenDto(token, (uid + ""));
+                return new TokenDto(token, uid, wxAccount.getHeadUid(), wxAccount.getNickName(), wxAccount.getAvatarUrl(), wxAccount.getGender());
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -111,12 +115,12 @@ public class WxAccountService implements WxAppletService {
         return null;
     }
 
-    void addFamily(Integer uid, String headCode){
+    void addFamily(Integer uid, String headCode) {
 
         Integer headUid = uid;
-        if (headCode != null && !headCode.trim().isEmpty()){
+        if (headCode != null && !headCode.trim().isEmpty()) {
             try {
-                headUid = Integer.parseInt((headCode)) ;
+                headUid = Integer.parseInt((headCode));
             } catch (Exception e) {
                 log.error("addFamily.headUid.err:", e.getMessage());
             }
@@ -126,17 +130,48 @@ public class WxAccountService implements WxAppletService {
             family.setHeadUid(headUid);
             family.setMemberUid(uid);
             familyMapper.insertFamily(family);
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error("addFamily.insert.err:", e.getMessage());
         }
     }
 
     @Override
     public WxAccount getWxAccountByToken(String token) {
-        if (!jwtConfig.verifyToken(token)){
+        if (!jwtConfig.verifyToken(token)) {
             throw new ApiException("Token Invalid");
         }
         return jwtConfig.getWxAccountByToken(token);
+    }
+
+    @Override
+    public void updateWxAccount(UpdateWxAccountReqDto req) {
+        WxAccount wxAccount = wxAccountMapper.findByWxUid(req.getId());
+
+        if (StringUtils.isNotBlank(req.getNickName())) {
+            wxAccount.setNickName(req.getNickName());
+        }
+        if (StringUtils.isNotBlank(req.getAvatarUrl())) {
+            wxAccount.setAvatarUrl(req.getAvatarUrl());
+        }
+        if (StringUtils.isNotBlank(req.getMobile())) {
+            wxAccount.setMobile(req.getMobile());
+        }
+
+        if (req.getGender() > 0) {
+            wxAccount.setGender(req.getGender()); //性别 0：未知、1：男、2：女
+        }
+
+        if (StringUtils.isNotBlank(req.getCountry())) {
+            wxAccount.setCountry(req.getCountry());
+        }
+        if (StringUtils.isNotBlank(req.getProvince())) {
+            wxAccount.setProvince(req.getProvince());
+        }
+        if (StringUtils.isNotBlank(req.getCity())) {
+            wxAccount.setCity(req.getCity());
+        }
+
+        wxAccountMapper.updateById(wxAccount);
     }
 
 }

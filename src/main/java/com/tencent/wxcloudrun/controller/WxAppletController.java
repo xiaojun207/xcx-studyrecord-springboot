@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.tencent.wxcloudrun.config.ApiResponse;
 import com.tencent.wxcloudrun.dto.CodeReqDto;
 import com.tencent.wxcloudrun.dto.TokenDto;
+import com.tencent.wxcloudrun.dto.UpdateWxAccountReqDto;
 import com.tencent.wxcloudrun.model.WxAccount;
 import com.tencent.wxcloudrun.service.WxAppletService;
 import lombok.extern.slf4j.Slf4j;
@@ -49,6 +50,14 @@ public class WxAppletController {
         Map<String, String> result = new HashMap<>();
         result.put("words", "hello World");
         return ApiResponse.ok(result);
+    }
+
+    @PostMapping("/wx/user/update")
+    ApiResponse updateUserInfo(WxAccount wxAccount, @RequestBody @Validated UpdateWxAccountReqDto req) {
+        req.setId(wxAccount.getId());
+        req.setOpenid(wxAccount.getOpenid());
+        wxAppletService.updateWxAccount(req);
+        return ApiResponse.ok();
     }
 
 }

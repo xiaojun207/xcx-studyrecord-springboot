@@ -22,7 +22,7 @@ public class GlobalException {
         if(MSG_TokenInvalid.equals(msg) || MSG_UserSessionNotExist.equals(msg)){
             return ApiResponse.error(-101,"未登录");
         }else {
-
+//            log.error("handleException.err:", e);
         }
         return ApiResponse.error(e.getMessage());
     }
