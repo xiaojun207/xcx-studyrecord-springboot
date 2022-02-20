@@ -92,15 +92,10 @@ public class WxAccountService implements WxAppletService {
             wxAccountMapper.upsertWxAccount(wxAccount);
             //5 . JWT 返回自定义登陆态 Token
 
-
             Integer uid = wxAccount.getId();
             if (uid == 0) {
                 // 获取id，用户昵称等
                 wxAccount = wxAccountMapper.findByWxOpenid(wxAccount.getOpenid());
-                uid = wxAccount.getId();
-                // 如果是新用户，尝试添加关联关系
-                String headCode = req.getHeadCode();
-                addFamily(uid, headCode);
             }
 
             //5 . JWT 返回自定义登陆态 Token
@@ -113,26 +108,6 @@ public class WxAccountService implements WxAppletService {
             }
         }
         return null;
-    }
-
-    void addFamily(Integer uid, String headCode) {
-
-        Integer headUid = uid;
-        if (headCode != null && !headCode.trim().isEmpty()) {
-            try {
-                headUid = Integer.parseInt((headCode));
-            } catch (Exception e) {
-                log.error("addFamily.headUid.err:", e.getMessage());
-            }
-        }
-        try {
-            Family family = new Family();
-            family.setHeadUid(headUid);
-            family.setMemberUid(uid);
-            familyMapper.insertFamily(family);
-        } catch (Exception e) {
-            log.error("addFamily.insert.err:", e.getMessage());
-        }
     }
 
     @Override

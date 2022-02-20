@@ -1,16 +1,22 @@
 package com.tencent.wxcloudrun.service.impl;
 
 import com.tencent.wxcloudrun.dao.FamilyMapper;
+import com.tencent.wxcloudrun.dao.PreFamilyMapper;
 import com.tencent.wxcloudrun.dao.WxAccountMapper;
+import com.tencent.wxcloudrun.model.ApiException;
 import com.tencent.wxcloudrun.model.Family;
+import com.tencent.wxcloudrun.model.PreFamily;
 import com.tencent.wxcloudrun.model.WxAccount;
 import com.tencent.wxcloudrun.service.FamilyService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -19,23 +25,106 @@ public class FamilyServiceImpl implements FamilyService {
     FamilyMapper familyMapper;
     @Resource
     WxAccountMapper wxAccountMapper;
+    @Resource
+    PreFamilyMapper preFamilyMapper;
+
+    @Override
+    public Integer getFamilyHeadUid(Integer uid) {
+        Family family = familyMapper.findByUid(uid);
+        if (family != null) {
+            return family.getHeadUid();
+        }
+        return uid;
+    }
+
+    @Override
+    public List<Integer> getFamilyMemberUidList(Integer uid) {
+        Family family = familyMapper.findByUid(uid);
+        List<Integer> uidList = Arrays.asList(uid);
+        if (family != null) {
+            List<Family> list = familyMapper.findAll(family.getHeadUid());
+            uidList = list.stream().map(Family::getMemberUid).collect(Collectors.toList());
+        }
+        return uidList;
+    }
+
 
     @Override
     public List<WxAccount> findAll(Integer uid) {
         Family family = familyMapper.findByUid(uid);
-        List<Family> list = familyMapper.findAll(family.getHeadUid());
-        List<WxAccount> res = new ArrayList<>();
-        for (Family f : list) {
-            WxAccount wxAccount = wxAccountMapper.findByWxUid(f.getMemberUid());
-            wxAccount.setHeadUid( family.getHeadUid());
-            res.add(wxAccount);
+        List<Integer> uidList = Arrays.asList(uid);
+        if (family != null) {
+            List<Family> list = familyMapper.findAll(family.getHeadUid());
+            uidList = list.stream().map(Family::getMemberUid).collect(Collectors.toList());
         }
-        return res;
+
+        List<WxAccount> wxAccountList = wxAccountMapper.findAllByUidList(uidList);
+        for (WxAccount wxAccount : wxAccountList) {
+            wxAccount.setHeadUid(family.getHeadUid());
+        }
+        return wxAccountList;
     }
 
     @Override
-    public void add(Family family1){
-        Family family = new Family();
-        familyMapper.insertFamily(family);
+    public List<WxAccount> findAllPreMemberList(Integer headUid) {
+        List<PreFamily> list = preFamilyMapper.findByHeadUid(headUid);
+        if(list.isEmpty()){
+            return Arrays.asList();
+        }
+
+        Map<Integer, PreFamily> preFamilyMap = list.stream().collect(Collectors.toMap(PreFamily::getMemberUid, o -> o));
+        List<Integer> uidList = list.stream().map(PreFamily::getMemberUid).collect(Collectors.toList());
+
+        List<WxAccount> wxAccountList = wxAccountMapper.findAllByUidList(uidList);
+        for (WxAccount wxAccount : wxAccountList) {
+            PreFamily preFamily = preFamilyMap.get(wxAccount.getId());
+            wxAccount.setStatus(preFamily.getStatus());
+            wxAccount.setHeadUid(headUid);
+            wxAccount.setCreatedAt(preFamily.getCreatedAt());
+        }
+        return wxAccountList;
+    }
+
+    @Override
+    public void joinFamily(Integer uid, String familyCode) {
+        Family headFamily = familyMapper.findByUid(Integer.parseInt(familyCode));
+        Integer headUid = headFamily.getHeadUid();
+
+        PreFamily family = new PreFamily();
+        family.setMemberUid(uid);
+        family.setHeadUid(headUid);
+        family.setStatus(0);
+        preFamilyMapper.insert(family);
+    }
+
+    @Transactional
+    @Override
+    public void acceptMember(Integer optUid, Integer memberUid) {
+        PreFamily preFamily = preFamilyMapper.findByUid(memberUid);
+        if (preFamily.getHeadUid() == optUid) {
+            if (preFamily.getStatus() != 0) {
+                throw new ApiException("加入申请已处理");
+            }
+
+            Family family = new Family();
+            family.setMemberUid(preFamily.getMemberUid());
+            family.setHeadUid(preFamily.getHeadUid());
+            family.setStatus(1);
+            familyMapper.insertFamily(family);
+            preFamily.setStatus(1);
+            preFamilyMapper.updateById(preFamily);
+        } else {
+            throw new ApiException("你没有操作权限");
+        }
+    }
+
+    @Override
+    public void deleteMember(Integer optUid, Integer memberUid) {
+        Family family = familyMapper.findByUid(memberUid);
+        if (family.getHeadUid() == optUid) {
+            familyMapper.deleteById(family.getId());
+        } else {
+            throw new ApiException("你没有操作权限");
+        }
     }
 }

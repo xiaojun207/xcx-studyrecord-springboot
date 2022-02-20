@@ -6,11 +6,9 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
-public class Family implements Serializable {
-
+public class PreFamily implements Serializable {
     private Integer id;
 
-    private String name;
     private Integer headUid;
     private Integer memberUid;
     private int status;

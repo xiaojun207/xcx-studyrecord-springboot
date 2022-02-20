@@ -37,6 +37,7 @@ public class UserTestServiceImpl implements UserTestService {
         Family family = familyMapper.findByUid(uid);
         List<Family> list = familyMapper.findAll(family.getHeadUid());
         List<Integer> uidList = list.stream().map(Family::getMemberUid).collect(Collectors.toList());
+
         List<WxAccount> wxAccountList = wxAccountMapper.findAllByUidList(uidList);
         Map<Integer, String> wxAccountMap = wxAccountList.stream().collect(Collectors.toMap(WxAccount::getId, WxAccount::getNickName));
         List<UserTest> res = userTestMapper.findAllByUidList(uidList);
