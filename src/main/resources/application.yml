@@ -26,6 +26,7 @@ mybatis-plus:
     map-underscore-to-camel-case: false
   global-config:
     db-config:
+      capitalMode: true
       table-underline: false
 
 #  微信小程序配置 appid /appsecret
