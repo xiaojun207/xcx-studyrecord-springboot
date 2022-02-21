@@ -6,6 +6,7 @@ import com.tencent.wxcloudrun.dao.WxAccountMapper;
 import com.tencent.wxcloudrun.model.Family;
 import com.tencent.wxcloudrun.model.UserTest;
 import com.tencent.wxcloudrun.model.WxAccount;
+import com.tencent.wxcloudrun.service.FamilyService;
 import com.tencent.wxcloudrun.service.PushMsgService;
 import com.tencent.wxcloudrun.service.UserTestService;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +28,9 @@ public class UserTestServiceImpl implements UserTestService {
     @Resource
     FamilyMapper familyMapper;
     @Resource
+    FamilyService familyService;
+
+    @Resource
     WxAccountMapper wxAccountMapper;
 
     @Resource
@@ -34,9 +38,7 @@ public class UserTestServiceImpl implements UserTestService {
 
     @Override
     public List<UserTest> findAllByUid(Integer uid) {
-        Family family = familyMapper.findByUid(uid);
-        List<Family> list = familyMapper.findAll(family.getHeadUid());
-        List<Integer> uidList = list.stream().map(Family::getMemberUid).collect(Collectors.toList());
+        List<Integer> uidList = familyService.getFamilyMemberUidList(uid);
 
         List<WxAccount> wxAccountList = wxAccountMapper.findAllByUidList(uidList);
         Map<Integer, String> wxAccountMap = wxAccountList.stream().collect(Collectors.toMap(WxAccount::getId, WxAccount::getNickName));

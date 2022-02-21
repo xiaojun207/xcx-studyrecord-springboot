@@ -38,9 +38,15 @@ public class FamilyServiceImpl implements FamilyService {
     }
 
     @Override
-    public List<Integer> getFamilyMemberUidList(Integer uid) {
-        Family family = familyMapper.findByUid(uid);
-        List<Integer> uidList = Arrays.asList(uid);
+    public Family findByUid(Integer memberUid) {
+        return familyMapper.findByUid(memberUid);
+    }
+
+
+    @Override
+    public List<Integer> getFamilyMemberUidList(Integer memberUid) {
+        Family family = this.findByUid(memberUid);
+        List<Integer> uidList = Arrays.asList(memberUid);
         if (family != null) {
             List<Family> list = familyMapper.findAll(family.getHeadUid());
             uidList = list.stream().map(Family::getMemberUid).collect(Collectors.toList());
@@ -50,9 +56,9 @@ public class FamilyServiceImpl implements FamilyService {
 
 
     @Override
-    public List<WxAccount> findAll(Integer uid) {
-        Family family = familyMapper.findByUid(uid);
-        List<Integer> uidList = Arrays.asList(uid);
+    public List<WxAccount> findAll(Integer memberUid) {
+        Family family = this.findByUid(memberUid);
+        List<Integer> uidList = Arrays.asList(memberUid);
         if (family != null) {
             List<Family> list = familyMapper.findAll(family.getHeadUid());
             uidList = list.stream().map(Family::getMemberUid).collect(Collectors.toList());
