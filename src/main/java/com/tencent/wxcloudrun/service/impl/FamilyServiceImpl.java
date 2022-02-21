@@ -98,6 +98,14 @@ public class FamilyServiceImpl implements FamilyService {
         Family headFamily = familyMapper.findByUid(Integer.parseInt(familyCode));
         Integer headUid = headFamily.getHeadUid();
 
+        Family oldFamily = familyMapper.findByUid(uid);
+        if(oldFamily != null){
+            if(oldFamily.getHeadUid() == headUid){
+                throw new ApiException("你已加入该家庭");
+            }
+            throw new ApiException("你已加入其它家庭");
+        }
+
         PreFamily family = new PreFamily();
         family.setMemberUid(uid);
         family.setHeadUid(headUid);
