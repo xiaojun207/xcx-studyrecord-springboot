@@ -41,11 +41,11 @@ public class UserTestServiceImpl implements UserTestService {
         List<Integer> uidList = familyService.getFamilyMemberUidList(uid);
 
         List<WxAccount> wxAccountList = wxAccountMapper.findAllByUidList(uidList);
-        Map<Integer, String> wxAccountMap = wxAccountList.stream().collect(Collectors.toMap(WxAccount::getId, WxAccount::getNickName));
+        Map<Integer, WxAccount> wxAccountMap = wxAccountList.stream().collect(Collectors.toMap(WxAccount::getId, o -> o));
         List<UserTest> res = userTestMapper.findAllByUidList(uidList);
         for (UserTest t : res) {
-            String nickname = wxAccountMap.get(t.getUid());
-            t.setNickName(nickname);
+            WxAccount wxAccount = wxAccountMap.get(t.getUid());
+            t.setNickName(wxAccount.getNickName());
         }
 
         return res;
