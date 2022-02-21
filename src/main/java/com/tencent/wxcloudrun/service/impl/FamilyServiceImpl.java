@@ -76,7 +76,7 @@ public class FamilyServiceImpl implements FamilyService {
     @Override
     public List<WxAccount> findAllPreMemberList(Integer headUid) {
         List<PreFamily> list = preFamilyMapper.findByHeadUid(headUid);
-        if(list.isEmpty()){
+        if (list.isEmpty()) {
             return Arrays.asList();
         }
 
