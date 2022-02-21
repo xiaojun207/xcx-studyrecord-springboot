@@ -1,5 +1,6 @@
 package com.tencent.wxcloudrun.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.tencent.wxcloudrun.dao.FamilyMapper;
 import com.tencent.wxcloudrun.dao.UserTestMapper;
 import com.tencent.wxcloudrun.dao.WxAccountMapper;
@@ -17,7 +18,6 @@ import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 @Service
@@ -61,6 +61,11 @@ public class UserTestServiceImpl implements UserTestService {
         }catch (Exception e){
             log.error("addUserTest.push.err:", e);
         }
+    }
+
+    @Override
+    public UserTest findLastByUid(Integer uid) {
+        return userTestMapper.findLastByUid(uid);
     }
 
     @Async

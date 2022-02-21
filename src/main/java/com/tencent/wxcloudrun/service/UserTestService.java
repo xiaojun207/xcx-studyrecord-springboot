@@ -9,4 +9,6 @@ public interface UserTestService {
     List<UserTest> findAllByUid(Integer uid);
     void addUserTest(UserTest userTest);
 
+    UserTest findLastByUid(Integer uid);
+
 }

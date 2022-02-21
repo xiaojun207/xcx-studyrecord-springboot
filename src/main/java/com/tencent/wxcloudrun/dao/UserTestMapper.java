@@ -23,4 +23,6 @@ public interface UserTestMapper extends BaseMapper<UserTest> {
           " VALUE(#{uid}, #{projectId}, #{projectName}, #{result}, #{score})")
   void insertUserTest(UserTest userTest);
 
+  @Select("SELECT `id`, `uid`, `projectId`, `projectName`, `result`, `score`, `createdAt`, `updatedAt` FROM UserTest where uid=#{uid} order by id desc limit 1")
+  UserTest findLastByUid(@Param("uid") Integer uid);
 }

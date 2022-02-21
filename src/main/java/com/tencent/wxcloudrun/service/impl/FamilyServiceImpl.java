@@ -101,7 +101,8 @@ public class FamilyServiceImpl implements FamilyService {
         Family oldFamily = familyMapper.findByUid(uid);
         if(oldFamily != null){
             if(oldFamily.getHeadUid() == headUid){
-                throw new ApiException("你已加入该家庭");
+//                throw new ApiException("你已加入该家庭");
+                return;
             }
             throw new ApiException("你已加入其它家庭");
         }
