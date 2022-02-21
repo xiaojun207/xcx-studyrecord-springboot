@@ -59,14 +59,16 @@ public class FamilyServiceImpl implements FamilyService {
     public List<WxAccount> findAll(Integer memberUid) {
         Family family = this.findByUid(memberUid);
         List<Integer> uidList = Arrays.asList(memberUid);
+        Integer headUid = memberUid;
         if (family != null) {
+            headUid = family.getHeadUid();
             List<Family> list = familyMapper.findAll(family.getHeadUid());
             uidList = list.stream().map(Family::getMemberUid).collect(Collectors.toList());
         }
 
         List<WxAccount> wxAccountList = wxAccountMapper.findAllByUidList(uidList);
         for (WxAccount wxAccount : wxAccountList) {
-            wxAccount.setHeadUid(family.getHeadUid());
+            wxAccount.setHeadUid(headUid);
         }
         return wxAccountList;
     }
