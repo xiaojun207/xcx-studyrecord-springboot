@@ -153,7 +153,7 @@ public class FamilyServiceImpl implements FamilyService {
         Integer headUid = headFamily.getHeadUid();
 
         WxAccount wxAccount = new WxAccount();
-        wxAccount.setOpenid("in" + UUID.randomUUID().toString().replaceAll("-", ""));
+        wxAccount.setOpenid("in-" + uid + "-" + UUID.randomUUID().toString().replaceAll("-", ""));
         wxAccount.setNickName(req.getNickName());
         wxAccount.setGender(req.getGender() == null ? 0 : req.getGender());
         wxAccountMapper.insert(wxAccount);
