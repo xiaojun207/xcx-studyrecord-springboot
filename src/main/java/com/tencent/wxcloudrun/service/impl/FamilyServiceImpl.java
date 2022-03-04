@@ -3,6 +3,7 @@ package com.tencent.wxcloudrun.service.impl;
 import com.tencent.wxcloudrun.dao.FamilyMapper;
 import com.tencent.wxcloudrun.dao.PreFamilyMapper;
 import com.tencent.wxcloudrun.dao.WxAccountMapper;
+import com.tencent.wxcloudrun.dto.MemberReqDto;
 import com.tencent.wxcloudrun.model.ApiException;
 import com.tencent.wxcloudrun.model.Family;
 import com.tencent.wxcloudrun.model.PreFamily;
@@ -16,6 +17,7 @@ import javax.annotation.Resource;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -99,8 +101,8 @@ public class FamilyServiceImpl implements FamilyService {
         Integer headUid = headFamily.getHeadUid();
 
         Family oldFamily = familyMapper.findByUid(uid);
-        if(oldFamily != null){
-            if(oldFamily.getHeadUid() == headUid){
+        if (oldFamily != null) {
+            if (oldFamily.getHeadUid() == headUid) {
 //                throw new ApiException("你已加入该家庭");
                 return;
             }
@@ -143,5 +145,23 @@ public class FamilyServiceImpl implements FamilyService {
         } else {
             throw new ApiException("你没有操作权限");
         }
+    }
+
+    @Override
+    public void addMember(Integer uid, MemberReqDto req) {
+        Family headFamily = familyMapper.findByUid(uid);
+        Integer headUid = headFamily.getHeadUid();
+
+        WxAccount wxAccount = new WxAccount();
+        wxAccount.setOpenid("in" + UUID.randomUUID().toString().replaceAll("-", ""));
+        wxAccount.setNickName(req.getNickName());
+        wxAccount.setGender(req.getGender() == null ? 0 : req.getGender());
+        wxAccountMapper.insert(wxAccount);
+
+        Family family = new Family();
+        family.setMemberUid(wxAccount.getId());
+        family.setHeadUid(headUid);
+        family.setStatus(1);
+        familyMapper.insertFamily(family);
     }
 }

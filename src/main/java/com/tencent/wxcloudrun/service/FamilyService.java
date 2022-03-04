@@ -1,5 +1,6 @@
 package com.tencent.wxcloudrun.service;
 
+import com.tencent.wxcloudrun.dto.MemberReqDto;
 import com.tencent.wxcloudrun.model.Family;
 import com.tencent.wxcloudrun.model.WxAccount;
 
@@ -22,4 +23,6 @@ public interface FamilyService {
     void acceptMember(Integer optUid, Integer memberUid);
 
     void deleteMember(Integer optUid, Integer memberUid);
+
+    void addMember(Integer uid, MemberReqDto req);
 }

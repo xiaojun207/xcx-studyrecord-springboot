@@ -3,6 +3,7 @@ package com.tencent.wxcloudrun.controller;
 import com.tencent.wxcloudrun.config.ApiResponse;
 import com.tencent.wxcloudrun.dto.FamilyMemberDto;
 import com.tencent.wxcloudrun.dto.JoinFamilyDto;
+import com.tencent.wxcloudrun.dto.MemberReqDto;
 import com.tencent.wxcloudrun.model.WxAccount;
 import com.tencent.wxcloudrun.service.FamilyService;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +29,12 @@ public class FamilyController {
   @GetMapping(value = "/preMemberList")
   ApiResponse preMemberList(WxAccount wxAccount) {
     return ApiResponse.ok(familyService.findAllPreMemberList(wxAccount.getId()));
+  }
+
+  @PostMapping(value = "/addMember")
+  ApiResponse addMember(WxAccount wxAccount, @RequestBody MemberReqDto req) {
+    familyService.addMember(wxAccount.getId(), req);
+    return ApiResponse.ok();
   }
 
   @PostMapping(value = "/joinFamily")

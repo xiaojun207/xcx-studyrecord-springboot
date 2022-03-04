@@ -1,5 +1,7 @@
 package com.tencent.wxcloudrun.model;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
@@ -12,6 +14,7 @@ import java.time.LocalDateTime;
 @TableName("WxAccount")
 public class WxAccount implements Serializable {
 
+    @TableId(value = "id", type = IdType.AUTO)
     private Integer id = 0;
     private Integer headUid;
     private String nickName;
