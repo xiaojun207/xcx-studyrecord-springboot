@@ -25,4 +25,14 @@ public interface UserTestMapper extends BaseMapper<UserTest> {
 
   @Select("SELECT `id`, `uid`, `projectId`, `projectName`, `result`, `score`, `createdAt`, `updatedAt` FROM UserTest where uid=#{uid} order by id desc limit 1")
   UserTest findLastByUid(@Param("uid") Integer uid);
+
+
+  @Select({"<script>",
+          "SELECT `id`, `uid`, `projectId`, `projectName`, `result`, `score`, `createdAt`, `updatedAt` FROM UserTest where uid IN",
+          " <foreach collection='uidList' item='item' index='index' open='(' separator=',' close=')'>",
+          " #{item}",
+          " </foreach>",
+          " order by id desc limit 1",
+          "</script>"})
+  UserTest findLastByUid(@Param("uidList") List<Integer> uidList);
 }

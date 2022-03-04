@@ -65,8 +65,10 @@ public class UserTestServiceImpl implements UserTestService {
 
     @Override
     public UserTest findLastByUid(Integer uid) {
-//        Family family = familyMapper.findByUid(uid);
-        return userTestMapper.findLastByUid(uid);
+        Family family = familyMapper.findByUid(uid);
+        List<Family> list = familyMapper.findAll(family.getHeadUid());
+        List<Integer> uidList = list.stream().map(Family::getMemberUid).collect(Collectors.toList());
+        return userTestMapper.findLastByUid(uidList);
     }
 
     @Async
