@@ -82,7 +82,7 @@ public class FamilyServiceImpl implements FamilyService {
             return Arrays.asList();
         }
 
-        Map<Integer, PreFamily> preFamilyMap = list.stream().collect(Collectors.toMap(PreFamily::getMemberUid, o -> o));
+        Map<Integer, PreFamily> preFamilyMap = list.stream().collect(Collectors.toMap(PreFamily::getMemberUid, o -> o, (V1, V2) -> V1));
         List<Integer> uidList = list.stream().map(PreFamily::getMemberUid).collect(Collectors.toList());
 
         List<WxAccount> wxAccountList = wxAccountMapper.findAllByUidList(uidList);
@@ -103,10 +103,16 @@ public class FamilyServiceImpl implements FamilyService {
         Family oldFamily = familyMapper.findByUid(uid);
         if (oldFamily != null) {
             if (oldFamily.getHeadUid() == headUid) {
-//                throw new ApiException("你已加入该家庭");
+                // 重复调用，默认成功，不返回错误
+                // throw new ApiException("你已加入该家庭");
                 return;
             }
             throw new ApiException("你已加入其它家庭");
+        }
+
+        PreFamily oldPreFamily = preFamilyMapper.findByUid(uid);
+        if (oldPreFamily != null && oldPreFamily.getStatus() == 0) {
+            throw new ApiException("你已申请加入,请通知【家庭管理员】同意");
         }
 
         PreFamily family = new PreFamily();
@@ -114,6 +120,11 @@ public class FamilyServiceImpl implements FamilyService {
         family.setHeadUid(headUid);
         family.setStatus(0);
         preFamilyMapper.insert(family);
+
+        if(oldPreFamily == null ) {
+            // 首次被邀请，自动同意加入
+            acceptMember(headUid, uid);
+        }
     }
 
     @Transactional
@@ -122,7 +133,8 @@ public class FamilyServiceImpl implements FamilyService {
         PreFamily preFamily = preFamilyMapper.findByUid(memberUid);
         if (preFamily.getHeadUid() == optUid) {
             if (preFamily.getStatus() != 0) {
-                throw new ApiException("加入申请已处理");
+//                throw new ApiException("加入申请已处理");
+                return;
             }
 
             Family family = new Family();

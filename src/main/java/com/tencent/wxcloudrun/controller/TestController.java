@@ -31,6 +31,11 @@ public class TestController {
     return ApiResponse.ok(userTestService.findAllByUid(wxAccount.getId()));
   }
 
+  @GetMapping(value = "/myFamilyList")
+  ApiResponse myFamilyList(WxAccount wxAccount) {
+    return ApiResponse.ok(userTestService.myFamilyList(wxAccount.getId()));
+  }
+
   @GetMapping(value = "/last")
   ApiResponse last(WxAccount wxAccount) {
     return ApiResponse.ok(userTestService.findLastByUid(wxAccount.getId()));

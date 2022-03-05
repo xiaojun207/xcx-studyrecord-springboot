@@ -15,7 +15,7 @@ public interface UserTestMapper extends BaseMapper<UserTest> {
           " <foreach collection='uidList' item='item' index='index' open='(' separator=',' close=')'>",
           " #{item}",
           " </foreach>",
-          " order by id desc limit 200",
+          " order by id desc limit 300",
           "</script>"})
   List<UserTest> findAllByUidList(@Param("uidList") List<Integer> uidList);
 

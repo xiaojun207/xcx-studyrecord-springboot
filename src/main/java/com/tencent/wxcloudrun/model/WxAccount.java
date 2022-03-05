@@ -35,4 +35,8 @@ public class WxAccount implements Serializable {
     private LocalDateTime createdAt;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedAt;
+
+    public String getNotNullNickName() {
+        return this.nickName == null || this.nickName.isEmpty() ? "-" : this.nickName ;
+    }
 }

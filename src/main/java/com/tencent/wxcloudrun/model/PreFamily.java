@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Data
 @TableName("PreFamily")
 public class PreFamily implements Serializable {
-    private Integer id;
+    private Integer id = 0;
 
     private Integer headUid;
     private Integer memberUid;
