@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -30,13 +31,38 @@ public class FamilyServiceImpl implements FamilyService {
     @Resource
     PreFamilyMapper preFamilyMapper;
 
+    static ConcurrentHashMap<Integer, Integer> uidMapHeadUid = new ConcurrentHashMap<>();
+
+    /**
+     * 返回headUid，如果不存在family，则自动创建
+     * @param uid
+     * @return
+     */
     @Override
-    public Integer getFamilyHeadUid(Integer uid) {
+    public Integer getFamilyHeadUid(Integer uid, boolean autoCreate) {
+        if(uidMapHeadUid.containsKey(uid)){
+            return uidMapHeadUid.get(uid);
+        }
+
         Family family = familyMapper.findByUid(uid);
         if (family != null) {
+            uidMapHeadUid.put(family.getMemberUid(), family.getHeadUid());
             return family.getHeadUid();
         }
+        if(autoCreate){
+            addMember(uid, uid);
+            uidMapHeadUid.put(uid, uid);
+        }
         return uid;
+    }
+
+    private void addMember(Integer memberUid, Integer headUid){
+        Family family = new Family();
+        family.setMemberUid(memberUid);
+        family.setHeadUid(headUid);
+        family.setStatus(1);
+        familyMapper.insertFamily(family);
+        uidMapHeadUid.put(family.getMemberUid(), family.getHeadUid());
     }
 
     @Override
@@ -44,18 +70,15 @@ public class FamilyServiceImpl implements FamilyService {
         return familyMapper.findByUid(memberUid);
     }
 
-
     @Override
     public List<Integer> getFamilyMemberUidList(Integer memberUid) {
         Family family = this.findByUid(memberUid);
         List<Integer> uidList = Arrays.asList(memberUid);
         if (family != null) {
-            List<Family> list = familyMapper.findAll(family.getHeadUid());
-            uidList = list.stream().map(Family::getMemberUid).collect(Collectors.toList());
+            uidList = familyMapper.findMemberUidList(family.getHeadUid());
         }
         return uidList;
     }
-
 
     @Override
     public List<WxAccount> findAll(Integer memberUid) {
@@ -64,8 +87,7 @@ public class FamilyServiceImpl implements FamilyService {
         Integer headUid = memberUid;
         if (family != null) {
             headUid = family.getHeadUid();
-            List<Family> list = familyMapper.findAll(family.getHeadUid());
-            uidList = list.stream().map(Family::getMemberUid).collect(Collectors.toList());
+            uidList = familyMapper.findMemberUidList(family.getHeadUid());
         }
 
         List<WxAccount> wxAccountList = wxAccountMapper.findAllByUidList(uidList);
@@ -97,8 +119,7 @@ public class FamilyServiceImpl implements FamilyService {
 
     @Override
     public void joinFamily(Integer uid, String familyCode) {
-        Family headFamily = familyMapper.findByUid(Integer.parseInt(familyCode));
-        Integer headUid = headFamily.getHeadUid();
+        Integer headUid = getFamilyHeadUid(Integer.parseInt(familyCode), true);
 
         Family oldFamily = familyMapper.findByUid(uid);
         if (oldFamily != null) {
@@ -137,11 +158,8 @@ public class FamilyServiceImpl implements FamilyService {
                 return;
             }
 
-            Family family = new Family();
-            family.setMemberUid(preFamily.getMemberUid());
-            family.setHeadUid(preFamily.getHeadUid());
-            family.setStatus(1);
-            familyMapper.insertFamily(family);
+            addMember(preFamily.getMemberUid(), preFamily.getHeadUid());
+
             preFamily.setStatus(1);
             preFamilyMapper.updateById(preFamily);
         } else {
@@ -154,15 +172,16 @@ public class FamilyServiceImpl implements FamilyService {
         Family family = familyMapper.findByUid(memberUid);
         if (family.getHeadUid() == optUid) {
             familyMapper.deleteById(family.getId());
+            uidMapHeadUid.remove(family.getMemberUid(), family.getHeadUid());
         } else {
             throw new ApiException("你没有操作权限");
         }
     }
 
+    @Transactional
     @Override
     public void addMember(Integer uid, MemberReqDto req) {
-        Family headFamily = familyMapper.findByUid(uid);
-        Integer headUid = headFamily.getHeadUid();
+        Integer headUid = getFamilyHeadUid(uid, true);
 
         WxAccount wxAccount = new WxAccount();
         wxAccount.setOpenid("in-" + uid + "-" + UUID.randomUUID().toString().replaceAll("-", ""));
@@ -170,10 +189,6 @@ public class FamilyServiceImpl implements FamilyService {
         wxAccount.setGender(req.getGender() == null ? 0 : req.getGender());
         wxAccountMapper.insert(wxAccount);
 
-        Family family = new Family();
-        family.setMemberUid(wxAccount.getId());
-        family.setHeadUid(headUid);
-        family.setStatus(1);
-        familyMapper.insertFamily(family);
+        addMember(wxAccount.getId(), headUid);
     }
 }

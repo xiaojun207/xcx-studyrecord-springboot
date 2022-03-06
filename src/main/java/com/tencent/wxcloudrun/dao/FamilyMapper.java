@@ -20,4 +20,7 @@ public interface FamilyMapper extends BaseMapper<Family> {
           " VALUE(#{headUid}, #{memberUid})")
   void insertFamily(Family family);
 
+  @Select("SELECT `memberUid` FROM Family where  headUid=#{headUid}")
+  List<Integer> findMemberUidList(@Param("headUid") Integer headUid);
+
 }

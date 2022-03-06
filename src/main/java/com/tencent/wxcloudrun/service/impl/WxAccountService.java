@@ -11,6 +11,7 @@ import com.tencent.wxcloudrun.dto.UpdateWxAccountReqDto;
 import com.tencent.wxcloudrun.model.ApiException;
 import com.tencent.wxcloudrun.model.Family;
 import com.tencent.wxcloudrun.model.WxAccount;
+import com.tencent.wxcloudrun.service.FamilyService;
 import com.tencent.wxcloudrun.service.WxAppletService;
 import com.tencent.wxcloudrun.utils.HttpUtils;
 import com.tencent.wxcloudrun.utils.JsonUtils;
@@ -26,6 +27,7 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
 import java.net.URI;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  *
@@ -42,11 +44,12 @@ public class WxAccountService implements WxAppletService {
     @Resource
     private WxAccountMapper wxAccountMapper;
     @Resource
-    private FamilyMapper familyMapper;
+    private FamilyService familyService;
     @Resource
     private RestTemplate restTemplate;
     @Resource
     private JwtConfig jwtConfig;
+
 
     /**
      * 微信的 code2session 接口 获取微信用户信息
@@ -115,7 +118,10 @@ public class WxAccountService implements WxAppletService {
         if (!jwtConfig.verifyToken(token)) {
             throw new ApiException("Token Invalid");
         }
-        return jwtConfig.getWxAccountByToken(token);
+        WxAccount wxAccount = jwtConfig.getWxAccountByToken(token);
+        Integer headUid = familyService.getFamilyHeadUid(wxAccount.getId(), false);
+        wxAccount.setHeadUid(headUid);
+        return wxAccount;
     }
 
     @Override

@@ -83,25 +83,19 @@ public class UserTestServiceImpl implements UserTestService {
 
     @Override
     public UserTest findLastByUid(Integer uid) {
-        Family family = familyMapper.findByUid(uid);
-        List<Integer> uidList = Arrays.asList(uid);
-        if (family != null) {
-            List<Family> list = familyMapper.findAll(family.getHeadUid());
-            uidList = list.stream().map(Family::getMemberUid).collect(Collectors.toList());
-        }
+        List<Integer> uidList = familyService.getFamilyMemberUidList(uid);
         return userTestMapper.findLastByUid(uidList);
     }
 
     @Async
     public void pushTestMsg(UserTest userTest) {
-        Family family = familyMapper.findByUid(userTest.getUid());
-        List<Family> list = familyMapper.findAll(family.getHeadUid());
+        List<Integer> uidList = familyService.getFamilyMemberUidList(userTest.getUid());
         WxAccount testAccount = wxAccountMapper.findByWxUid(userTest.getUid());
-        List<Integer> uidList = list.stream().map(Family::getMemberUid).collect(Collectors.toList());
         String title = "你的家庭成员" + testAccount.getNickName() + "增加了锻炼信息";
         String msg = userTest.getProjectName() + ":" + userTest.getResult() + "" + userTest.getUnit();
-        for (Integer uid : uidList) {
-            WxAccount wxAccount = wxAccountMapper.findByWxUid(uid);
+
+        List<WxAccount> wxAccountList = wxAccountMapper.findAllByUidList(uidList);
+        for (WxAccount wxAccount : wxAccountList) {
             pushMsgService.pushMsgToUser(wxAccount, title, msg);
         }
     }

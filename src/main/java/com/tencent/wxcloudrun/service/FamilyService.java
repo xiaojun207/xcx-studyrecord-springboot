@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface FamilyService {
 
-    Integer getFamilyHeadUid(Integer uid);
+    Integer getFamilyHeadUid(Integer uid, boolean autoCreate);
 
     Family findByUid(Integer memberUid);
 
