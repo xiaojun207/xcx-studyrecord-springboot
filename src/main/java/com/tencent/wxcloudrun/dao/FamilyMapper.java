@@ -16,6 +16,9 @@ public interface FamilyMapper extends BaseMapper<Family> {
   @Select("SELECT `id`, `headUid`, `memberUid`, `createdAt`, `updatedAt` FROM Family where  headUid=#{headUid} order by id desc")
   List<Family> findAll(@Param("headUid") Integer headUid);
 
+  @Select("SELECT count(*) FROM Family where  headUid=#{headUid}")
+  Integer findCount(@Param("headUid") Integer headUid);
+
   @Insert("INSERT INTO `Family`(`headUid`, `memberUid`)" +
           " VALUE(#{headUid}, #{memberUid})")
   void insertFamily(Family family);

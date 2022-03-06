@@ -127,8 +127,17 @@ public class FamilyServiceImpl implements FamilyService {
                 // 重复调用，默认成功，不返回错误
                 // throw new ApiException("你已加入该家庭");
                 return;
+            }else if(oldFamily.getHeadUid() == uid){
+               // 自己一个人的
+                Integer count = familyMapper.findCount(uid);
+                if (count == 1){
+                    deleteMember(uid, uid);
+                }else {
+                    throw new ApiException("请先移除你的家庭");
+                }
+            }else {
+                throw new ApiException("你已加入其它家庭");
             }
-            throw new ApiException("你已加入其它家庭");
         }
 
         PreFamily oldPreFamily = preFamilyMapper.findByUid(uid);

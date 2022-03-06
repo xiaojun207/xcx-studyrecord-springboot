@@ -1,11 +1,10 @@
 package com.tencent.wxcloudrun.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.tencent.wxcloudrun.dao.FamilyMapper;
 import com.tencent.wxcloudrun.dao.UserTestMapper;
 import com.tencent.wxcloudrun.dao.WxAccountMapper;
 import com.tencent.wxcloudrun.dto.UserTestRespDto;
-import com.tencent.wxcloudrun.model.Family;
+import com.tencent.wxcloudrun.model.ApiException;
 import com.tencent.wxcloudrun.model.UserTest;
 import com.tencent.wxcloudrun.model.WxAccount;
 import com.tencent.wxcloudrun.service.FamilyService;
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -27,8 +25,6 @@ import java.util.stream.Collectors;
 public class UserTestServiceImpl implements UserTestService {
     @Resource
     UserTestMapper userTestMapper;
-    @Resource
-    FamilyMapper familyMapper;
     @Resource
     FamilyService familyService;
 
@@ -79,6 +75,17 @@ public class UserTestServiceImpl implements UserTestService {
         } catch (Exception e) {
             log.error("addUserTest.push.err:", e);
         }
+    }
+
+    @Override
+    public void deleteUserTest(Integer optUid, Integer id) {
+        UserTest userTest = userTestMapper.selectById(id);
+
+        Integer headUid = familyService.getFamilyHeadUid(userTest.getUid(), false);
+        if(headUid != optUid){
+            throw new ApiException("你没有操作权限");
+        }
+        userTestMapper.deleteById(id);
     }
 
     @Override

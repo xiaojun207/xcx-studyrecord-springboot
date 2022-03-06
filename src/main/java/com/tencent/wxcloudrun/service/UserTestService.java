@@ -11,6 +11,8 @@ public interface UserTestService {
     List<UserTest> findAllByUid(Integer uid);
     void addUserTest(UserTest userTest);
 
+    void deleteUserTest(Integer optUid, Integer id);
+
     UserTest findLastByUid(Integer uid);
 
 }
