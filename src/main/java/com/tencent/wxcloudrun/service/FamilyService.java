@@ -18,7 +18,7 @@ public interface FamilyService {
 
     List<WxAccount> findAllPreMemberList(Integer headUid);
 
-    void joinFamily(Integer uid, String familyCode);
+    Integer joinFamily(Integer uid, String familyCode);
 
     void acceptMember(Integer optUid, Integer memberUid);
 

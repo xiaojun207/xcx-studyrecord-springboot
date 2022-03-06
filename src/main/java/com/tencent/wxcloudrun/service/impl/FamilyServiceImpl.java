@@ -118,7 +118,7 @@ public class FamilyServiceImpl implements FamilyService {
     }
 
     @Override
-    public void joinFamily(Integer uid, String familyCode) {
+    public Integer joinFamily(Integer uid, String familyCode) {
         Integer headUid = getFamilyHeadUid(Integer.parseInt(familyCode), true);
 
         Family oldFamily = familyMapper.findByUid(uid);
@@ -126,7 +126,7 @@ public class FamilyServiceImpl implements FamilyService {
             if (oldFamily.getHeadUid() == headUid) {
                 // 重复调用，默认成功，不返回错误
                 // throw new ApiException("你已加入该家庭");
-                return;
+                return headUid;
             }else if(oldFamily.getHeadUid() == uid){
                // 自己一个人的
                 Integer count = familyMapper.findCount(uid);
@@ -155,6 +155,7 @@ public class FamilyServiceImpl implements FamilyService {
             // 首次被邀请，自动同意加入
             acceptMember(headUid, uid);
         }
+        return headUid;
     }
 
     @Transactional

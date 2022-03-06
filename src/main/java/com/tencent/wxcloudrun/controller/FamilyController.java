@@ -39,8 +39,8 @@ public class FamilyController {
 
   @PostMapping(value = "/joinFamily")
   ApiResponse joinFamily(WxAccount wxAccount, @RequestBody JoinFamilyDto req) {
-    familyService.joinFamily(wxAccount.getId(), req.getFamilyCode());
-    return ApiResponse.ok();
+    Integer headUid = familyService.joinFamily(wxAccount.getId(), req.getFamilyCode());
+    return ApiResponse.ok(headUid);
   }
 
   @PostMapping(value = "/acceptMember")
