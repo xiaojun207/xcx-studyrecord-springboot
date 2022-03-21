@@ -32,8 +32,8 @@ public class TestController {
   }
 
   @GetMapping(value = "/myFamilyList")
-  ApiResponse myFamilyList(WxAccount wxAccount) {
-    return ApiResponse.ok(userTestService.myFamilyList(wxAccount.getId()));
+  ApiResponse myFamilyList(WxAccount wxAccount, Integer projectId) {
+    return ApiResponse.ok(userTestService.myFamilyList(wxAccount.getId(), projectId));
   }
 
   @GetMapping(value = "/last")

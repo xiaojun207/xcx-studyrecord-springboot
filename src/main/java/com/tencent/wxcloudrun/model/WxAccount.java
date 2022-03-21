@@ -31,6 +31,8 @@ public class WxAccount implements Serializable {
     private String openid;
     private String sessionKey;
 
+    private String role;
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -39,4 +41,9 @@ public class WxAccount implements Serializable {
     public String getNotNullNickName() {
         return this.nickName == null || this.nickName.isEmpty() ? "-" : this.nickName ;
     }
+
+    public boolean isAdmin(){
+        return "ADMIN".equals(this.role);
+    }
+
 }

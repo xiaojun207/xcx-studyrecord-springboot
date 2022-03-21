@@ -35,11 +35,11 @@ public class UserTestServiceImpl implements UserTestService {
     PushMsgService pushMsgService;
 
     @Override
-    public JSONObject myFamilyList(Integer uid) {
+    public JSONObject myFamilyList(Integer uid, Integer projectId) {
         List<Integer> uidList = familyService.getFamilyMemberUidList(uid);
 
         List<WxAccount> wxAccountList = wxAccountMapper.findAllByUidList(uidList);
-        List<UserTest> list = userTestMapper.findAllByUidList(uidList);
+        List<UserTest> list = userTestMapper.findAllByUidList(uidList, projectId);
 
         Map<Integer, String> wxAccountMap = wxAccountList.stream().collect(Collectors.toMap(WxAccount::getId, WxAccount::getNotNullNickName));
         List<UserTestRespDto> respDtoList = list.stream().map(a -> new UserTestRespDto(a)).collect(Collectors.toList());
@@ -56,7 +56,7 @@ public class UserTestServiceImpl implements UserTestService {
 
         List<WxAccount> wxAccountList = wxAccountMapper.findAllByUidList(uidList);
         Map<Integer, WxAccount> wxAccountMap = wxAccountList.stream().collect(Collectors.toMap(WxAccount::getId, o -> o));
-        List<UserTest> res = userTestMapper.findAllByUidList(uidList);
+        List<UserTest> res = userTestMapper.findAllByUidList(uidList, null);
         for (UserTest t : res) {
             WxAccount wxAccount = wxAccountMap.get(t.getUid());
             t.setNickName(wxAccount.getNickName());
@@ -91,7 +91,7 @@ public class UserTestServiceImpl implements UserTestService {
     @Override
     public UserTest findLastByUid(Integer uid) {
         List<Integer> uidList = familyService.getFamilyMemberUidList(uid);
-        return userTestMapper.findLastByUid(uidList);
+        return userTestMapper.findLastByUidList(uidList);
     }
 
     @Async

@@ -15,9 +15,12 @@ public interface UserTestMapper extends BaseMapper<UserTest> {
           " <foreach collection='uidList' item='item' index='index' open='(' separator=',' close=')'>",
           " #{item}",
           " </foreach>",
+          "<if test='ProjectId != null'>",
+          " and projectId=#{projectId}",
+          "</if>",
           " order by id desc limit 300",
           "</script>"})
-  List<UserTest> findAllByUidList(@Param("uidList") List<Integer> uidList);
+  List<UserTest> findAllByUidList(@Param("uidList") List<Integer> uidList, @Param("projectId")Integer projectId);
 
   @Insert("INSERT INTO `UserTest`(`uid`, `projectId`, `projectName`, `result`, `score`)" +
           " VALUE(#{uid}, #{projectId}, #{projectName}, #{result}, #{score})")
@@ -34,5 +37,5 @@ public interface UserTestMapper extends BaseMapper<UserTest> {
           " </foreach>",
           " order by id desc limit 1",
           "</script>"})
-  UserTest findLastByUid(@Param("uidList") List<Integer> uidList);
+  UserTest findLastByUidList(@Param("uidList") List<Integer> uidList);
 }

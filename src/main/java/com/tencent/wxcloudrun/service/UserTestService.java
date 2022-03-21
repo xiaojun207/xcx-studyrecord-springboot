@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface UserTestService {
 
-    JSONObject myFamilyList(Integer uid);
+    JSONObject myFamilyList(Integer uid, Integer projectId);
     List<UserTest> findAllByUid(Integer uid);
     void addUserTest(UserTest userTest);
 
