@@ -15,7 +15,7 @@ public interface UserTestMapper extends BaseMapper<UserTest> {
           " <foreach collection='uidList' item='item' index='index' open='(' separator=',' close=')'>",
           " #{item}",
           " </foreach>",
-          "<if test='ProjectId != null'>",
+          "<if test='projectId != null'>",
           " and projectId=#{projectId}",
           "</if>",
           " order by id desc limit 300",

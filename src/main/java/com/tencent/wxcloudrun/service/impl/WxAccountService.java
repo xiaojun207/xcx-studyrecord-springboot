@@ -107,7 +107,7 @@ public class WxAccountService implements WxAppletService {
             try {
                 Integer headUid = familyService.getFamilyHeadUid(wxAccount.getId(), false);
                 wxAccount.setHeadUid(headUid);
-                return new TokenDto(token, uid, wxAccount.getHeadUid(), wxAccount.getNickName(), wxAccount.getAvatarUrl(), wxAccount.getGender());
+                return new TokenDto(token, uid, wxAccount.getHeadUid(), wxAccount.getNickName(), wxAccount.getAvatarUrl(), wxAccount.getRole(), wxAccount.getGender());
             } catch (Exception e) {
                 e.printStackTrace();
             }

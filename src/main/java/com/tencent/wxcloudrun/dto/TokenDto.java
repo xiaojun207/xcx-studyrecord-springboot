@@ -13,6 +13,7 @@ public class TokenDto {
 
     private String nickName;
     private String avatarUrl;
+    private String role;
     private int gender; //性别 0：未知、1：男、2：女
 
 }
