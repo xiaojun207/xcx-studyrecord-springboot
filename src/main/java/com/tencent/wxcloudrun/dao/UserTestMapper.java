@@ -18,7 +18,7 @@ public interface UserTestMapper extends BaseMapper<UserTest> {
           "<if test='projectId != null'>",
           " and projectId=#{projectId}",
           "</if>",
-          " order by id desc limit 300",
+          " order by createdAt desc limit 300",
           "</script>"})
   List<UserTest> findAllByUidList(@Param("uidList") List<Integer> uidList, @Param("projectId")Integer projectId);
 
@@ -26,7 +26,7 @@ public interface UserTestMapper extends BaseMapper<UserTest> {
           " VALUE(#{uid}, #{projectId}, #{projectName}, #{result}, #{score})")
   void insertUserTest(UserTest userTest);
 
-  @Select("SELECT `id`, `uid`, `projectId`, `projectName`, `result`, `score`, `createdAt`, `updatedAt` FROM UserTest where uid=#{uid} order by id desc limit 1")
+  @Select("SELECT `id`, `uid`, `projectId`, `projectName`, `result`, `score`, `createdAt`, `updatedAt` FROM UserTest where uid=#{uid} order by createdAt desc limit 1")
   UserTest findLastByUid(@Param("uid") Integer uid);
 
 
@@ -35,7 +35,7 @@ public interface UserTestMapper extends BaseMapper<UserTest> {
           " <foreach collection='uidList' item='item' index='index' open='(' separator=',' close=')'>",
           " #{item}",
           " </foreach>",
-          " order by id desc limit 1",
+          " order by createdAt desc limit 1",
           "</script>"})
   UserTest findLastByUidList(@Param("uidList") List<Integer> uidList);
 }
