@@ -35,12 +35,13 @@ public class FamilyServiceImpl implements FamilyService {
 
     /**
      * 返回headUid，如果不存在family，则自动创建
+     *
      * @param uid
      * @return
      */
     @Override
     public Integer getFamilyHeadUid(Integer uid, boolean autoCreate) {
-        if(uidMapHeadUid.containsKey(uid)){
+        if (uidMapHeadUid.containsKey(uid)) {
             return uidMapHeadUid.get(uid);
         }
 
@@ -49,14 +50,14 @@ public class FamilyServiceImpl implements FamilyService {
             uidMapHeadUid.put(family.getMemberUid(), family.getHeadUid());
             return family.getHeadUid();
         }
-        if(autoCreate){
+        if (autoCreate) {
             addMember(uid, uid);
             uidMapHeadUid.put(uid, uid);
         }
         return uid;
     }
 
-    private void addMember(Integer memberUid, Integer headUid){
+    private void addMember(Integer memberUid, Integer headUid) {
         Family family = new Family();
         family.setMemberUid(memberUid);
         family.setHeadUid(headUid);
@@ -127,15 +128,15 @@ public class FamilyServiceImpl implements FamilyService {
                 // 重复调用，默认成功，不返回错误
                 // throw new ApiException("你已加入该家庭");
                 return headUid;
-            }else if(oldFamily.getHeadUid() == uid){
-               // 自己一个人的
+            } else if (oldFamily.getHeadUid() == uid) {
+                // 自己一个人的
                 Integer count = familyMapper.findCount(uid);
-                if (count == 1){
+                if (count == 1) {
                     deleteMember(uid, uid);
-                }else {
+                } else {
                     throw new ApiException("请先移除你的家庭");
                 }
-            }else {
+            } else {
                 throw new ApiException("你已加入其它家庭");
             }
         }
@@ -151,7 +152,7 @@ public class FamilyServiceImpl implements FamilyService {
         family.setStatus(0);
         preFamilyMapper.insert(family);
 
-        if(oldPreFamily == null ) {
+        if (oldPreFamily == null) {
             // 首次被邀请，自动同意加入
             acceptMember(headUid, uid);
         }
@@ -190,15 +191,27 @@ public class FamilyServiceImpl implements FamilyService {
 
     @Transactional
     @Override
-    public void addMember(Integer uid, MemberReqDto req) {
-        Integer headUid = getFamilyHeadUid(uid, true);
-
-        WxAccount wxAccount = new WxAccount();
-        wxAccount.setOpenid("in-" + uid + "-" + UUID.randomUUID().toString().replaceAll("-", ""));
-        wxAccount.setNickName(req.getNickName());
-        wxAccount.setGender(req.getGender() == null ? 0 : req.getGender());
-        wxAccountMapper.insert(wxAccount);
-
-        addMember(wxAccount.getId(), headUid);
+    public void addMember(Integer optUid, MemberReqDto req) {
+        if (req.getUid() != null && req.getUid() > 0) {
+            Family family = familyMapper.findByUid(req.getUid());
+            if (family.getHeadUid() == optUid) {
+                WxAccount wxAccount = wxAccountMapper.findByWxUid(req.getUid());
+                wxAccount.setNickName(req.getNickName());
+                wxAccount.setGender(req.getGender() == null ? 0 : req.getGender());
+                wxAccount.setGrade(req.getGrade() == null ? 0 : req.getGrade());
+                wxAccountMapper.updateById(wxAccount);
+            } else {
+                throw new ApiException("你没有操作权限");
+            }
+        } else {
+            Integer headUid = getFamilyHeadUid(optUid, true);
+            WxAccount wxAccount = new WxAccount();
+            wxAccount.setOpenid("in-" + optUid + "-" + UUID.randomUUID().toString().replaceAll("-", ""));
+            wxAccount.setNickName(req.getNickName());
+            wxAccount.setGender(req.getGender() == null ? 0 : req.getGender());
+            wxAccount.setGrade(req.getGrade() == null ? 0 : req.getGrade());
+            wxAccountMapper.insert(wxAccount);
+            addMember(wxAccount.getId(), headUid);
+        }
     }
 }

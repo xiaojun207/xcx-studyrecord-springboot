@@ -20,7 +20,8 @@ public class WxAccount implements Serializable {
     private String nickName;
     private String avatarUrl;
     private String mobile;
-    private int gender; //性别 0：未知、1：男、2：女
+    private int gender; // 性别 0：未知、1：男、2：女
+    private int grade; // 所在年级
     private int status;
 
     private String country;

@@ -12,13 +12,13 @@ import java.util.List;
 @Mapper
 public interface WxAccountMapper extends BaseMapper<WxAccount> {
 
-  @Select("SELECT `id`, `nickName`, `avatarUrl`, `mobile`, `gender`, `country`, `province`, `city`, `openid`, `unionid`, `sessionKey`, `createdAt`, `updatedAt`, `role`" +
+  @Select("SELECT `id`, `nickName`, `avatarUrl`, `mobile`, `gender`, `country`, `province`, `city`, `openid`, `unionid`, `sessionKey`, `createdAt`, `updatedAt`, `role`, `grade`" +
           " FROM WxAccount WHERE id = #{id}")
   WxAccount findByWxUid(@Param("id") Integer id);
 
 
   @Select({"<script>",
-          "SELECT `id`, `nickName`, `avatarUrl`, `mobile`, `gender`, `country`, `province`, `city`, `openid`, `unionid`, `sessionKey`, `createdAt`, `updatedAt`, `role`",
+          "SELECT `id`, `nickName`, `avatarUrl`, `mobile`, `gender`, `country`, `province`, `city`, `openid`, `unionid`, `sessionKey`, `createdAt`, `updatedAt`, `role`, `grade`",
           " FROM WxAccount WHERE id in",
           " <foreach collection='uidList' item='item' index='index' open='(' separator=',' close=')'>",
           " #{item}",
@@ -27,7 +27,7 @@ public interface WxAccountMapper extends BaseMapper<WxAccount> {
           "</script>"})
   List<WxAccount> findAllByUidList(@Param("uidList") List<Integer> uidList);
 
-  @Select("SELECT `id`, `nickName`, `avatarUrl`, `mobile`, `gender`, `country`, `province`, `city`, `openid`, `unionid`, `sessionKey`, `createdAt`, `updatedAt`, `role` FROM WxAccount WHERE openid = #{openid}")
+  @Select("SELECT `id`, `nickName`, `avatarUrl`, `mobile`, `gender`, `country`, `province`, `city`, `openid`, `unionid`, `sessionKey`, `createdAt`, `updatedAt`, `role`, `grade` FROM WxAccount WHERE openid = #{openid}")
   WxAccount findByWxOpenid(@Param("openid") String openid);
 
   @Insert(" INSERT INTO `WxAccount`(`id`, `openid`, `unionid`, `sessionKey`)" +
