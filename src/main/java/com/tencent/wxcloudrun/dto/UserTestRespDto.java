@@ -16,6 +16,7 @@ public class UserTestRespDto implements Serializable {
     private Integer uid;
     private Integer pId;
     private Double r;
+    private Double s;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -28,6 +29,7 @@ public class UserTestRespDto implements Serializable {
         this.pId = userTest.getProjectId();
         this.r = userTest.getResult();
         this.t = userTest.getCreatedAt();
+        this.s = userTest.getScore();
         this.ts = userTest.getCreatedAt().toInstant(ZoneOffset.of("+8")).toEpochMilli();;
     }
 }

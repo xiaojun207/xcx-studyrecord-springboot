@@ -21,7 +21,9 @@ public class AdminServiceImpl implements AdminService {
 
         JSONObject res = new JSONObject();
         res.put("userCount", userCount);
-        res.put("userTestCount", userTestCount);
+        res.put("TestCount", userTestCount);
+        res.put("userTestCount", userTestMapper.selectUserCount());
+
         return res;
     }
 }

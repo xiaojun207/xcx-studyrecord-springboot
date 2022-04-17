@@ -38,4 +38,8 @@ public interface UserTestMapper extends BaseMapper<UserTest> {
           " order by createdAt desc limit 1",
           "</script>"})
   UserTest findLastByUidList(@Param("uidList") List<Integer> uidList);
+
+  @Select("select count(distinct uid) from UserTest")
+  Integer selectUserCount();
+
 }
